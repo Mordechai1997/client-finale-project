@@ -13,7 +13,6 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import { SERVER_URL, BASE_ROUTE } from '../constants';
 import { LogIn } from "./userLogInSlice";
-import { SetListSelect } from './categorySlice'
 import ButtonAddNewProduct from './ButtonAddNewProduct'
 import HomePage from './HomePage';
 import Spinner from "./Spinner";
@@ -23,10 +22,8 @@ function App() {
   const dispatch = useDispatch();
   const userLogIn = useSelector((state) => state.reducer.userlogin.userInfo);
   const [isLoading, setIsLoading] = useState(true)
-  const [listSelect, setListSelect] = useState('');
 
   useEffect(() => {
-    getallCategorys();
     isAuth();
   }, [])
 
@@ -41,15 +38,6 @@ function App() {
       setIsLoading(false)
 
     }
-  }
-  const getallCategorys = async () => {
-    setIsLoading(true)
-
-    const data = await axios.get(`${SERVER_URL}/products/getallCategorys`, {
-      withCredentials: true
-    })
-    dispatch(SetListSelect(data.data));
-
   }
 
   return (

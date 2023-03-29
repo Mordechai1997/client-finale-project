@@ -20,6 +20,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import { Box } from '@mui/system';
 import ApartmentSharpIcon from '@mui/icons-material/ApartmentSharp';
 import { SERVER_URL, BASE_ROUTE } from '../constants';
+import useAllCategorys from '../Hooks/useAllCategorys';
 
 const listTypeDelivery = [{
   CategoryId: 1,
@@ -34,7 +35,7 @@ export default function Publish() {
 
   const navigate = useNavigate();
   const userLogIn = useSelector((state) => state.reducer.userlogin.userInfo);
-  const listSelect = useSelector((state) => state.reducer.categorys.listSelect);
+  const listSelect = useAllCategorys();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [city, setCity] = useState('');
@@ -48,10 +49,6 @@ export default function Publish() {
 
   const [selected, setSelected] = useState('');
   const [selectedTypeDelivery, setSelectedTypeDelivery] = useState('');
-
-  useEffect(() => {
-    console.log(listSelect)
-  }, [])
 
   const changeUrl = (url) => {
     navigate(url)
