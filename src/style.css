@@ -1,0 +1,27 @@
+body{
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    user-select: none;
+}
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+.form-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
+    margin: 100px auto;
+    padding: 20px;
+    width: 35vw;
+}
+.btn-login:hover{
+    color: white;
+}
+@media only screen and (max-width: 750px) {
+    .form-login {
+        width: 80vw;
+    }
+}
