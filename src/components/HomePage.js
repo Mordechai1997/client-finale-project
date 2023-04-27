@@ -18,7 +18,7 @@ import CardProduct from './CardProduct';
 import { SERVER_URL, BASE_ROUTE } from '../constants';
 import Spinner from "./Spinner";
 import SearchIcon from '@mui/icons-material/Search';
-import {SetListProducts} from './categorySlice'
+import { SetListProducts } from './categorySlice'
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -31,8 +31,10 @@ export default function HomePage() {
     const [listProductsSearch, setListProductsSearch] = useState('');
     const [isLoading, setIsLoading] = useState(true)
     const [page, setPage] = useState(1);
+    const listOfFavoritProducts = useSelector((state) => state.reducer.listProducts.listOfFavoritProducts);
 
     useEffect(() => {
+        debugger
         ProductsBySearch("");
     }, [])
 
@@ -76,7 +78,7 @@ export default function HomePage() {
         <div style={{
             marginTop: "100px",
         }}>
-            {isLoading?<Spinner isLoading={isLoading} />:<>
+
             <Box >
                 {/* <SelectField
                     list={listSelect}
@@ -110,26 +112,27 @@ export default function HomePage() {
                     required={true}
                 /> */}
             </Box>
-            {(listProducts && listProducts[0]) && (<>
-                <div
-                    className="cointener"
-                    style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        alignItems: "center",
-                        justifyContent: "center"
-                    }}
-                >
-                    {listProducts.map((item, index) => (<CardProduct key={index} item={item} />))}
-                </div>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5, mb: 5 }}>
-                    <Pages
-                        cntPages={countPages}
-                        page={page}
-                        handleChange={handleChangePage}
-                    />
-                </Box>
-            </>)}
+            {isLoading ? <Spinner isLoading={isLoading} /> : <>
+                {(listProducts && listProducts[0]) && (<>
+                    <div
+                        className="cointener"
+                        style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}
+                    >
+                        {listProducts.map((item, index) => (<CardProduct key={index} item={item} />))}
+                    </div>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5, mb: 5 }}>
+                        <Pages
+                            cntPages={countPages}
+                            page={page}
+                            handleChange={handleChangePage}
+                        />
+                    </Box>
+                </>)}
             </>}
         </div>
 

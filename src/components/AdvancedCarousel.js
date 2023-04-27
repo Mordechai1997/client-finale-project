@@ -7,9 +7,12 @@ import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CardProduct from './CardProduct';
+import { useSelector } from "react-redux";
 
 
 const AdvancedCarousel = ({ list }) => {
+  const listOfFavoritProducts = useSelector((state) => state.reducer.listProducts.listOfFavoritProducts);
+
   const {
     scrollRef,
     pages,
@@ -18,7 +21,6 @@ const AdvancedCarousel = ({ list }) => {
     prev,
     goTo
   } = useSnapCarousel();
-
 
   return (
     <div style={{
@@ -56,7 +58,7 @@ const AdvancedCarousel = ({ list }) => {
               alignItems: "center"
             }}
           >
-            <CardProduct item={item} />
+            <CardProduct item={item}/>
           </li>
         ))}
       </ul>

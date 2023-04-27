@@ -73,8 +73,8 @@ export function ResetPassword() {
             >
                 Reset Password
             </Button>
-            <p> No account? {''}
-                <Button onClick={()=>changeUrl('/')} sx={{ textTransform: 'none' }}>
+            <p> Remember the password? {''}
+                <Button onClick={()=>changeUrl('/login')} sx={{ textTransform: 'none' }}>
                     Sign in
                 </Button>
             </p>

@@ -21,6 +21,8 @@ import { Box } from '@mui/system';
 import ApartmentSharpIcon from '@mui/icons-material/ApartmentSharp';
 import { SERVER_URL, BASE_ROUTE } from '../constants';
 import useAllCategorys from '../Hooks/useAllCategorys';
+import { getAllMyProducts } from '../services/ApiServicesProduct';
+import { initListOfMyProducts } from './listProductsSlice';
 
 const listTypeDelivery = [{
   CategoryId: 1,
@@ -32,8 +34,9 @@ const listTypeDelivery = [{
 }]
 
 export default function Publish() {
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const userLogIn = useSelector((state) => state.reducer.userlogin.userInfo);
   const listSelect = useAllCategorys();
   const [title, setTitle] = useState('');
@@ -71,6 +74,10 @@ export default function Publish() {
     setFile(e.target.files[0]);
     setFileName(e.target.files[0].name);
   }
+  const clearFile = () => {
+    setFile(null);
+    setFileName(null);
+  }
   const setCityProduct = (e) => {
     setCity(e);
     // try{
@@ -81,7 +88,6 @@ export default function Publish() {
     // }
   }
   const handleSubmit = async () => {
-    debugger
     const result = validPublic(selected, title, fileName, phone, city, selectedTypeDelivery)
     if (result.type === 'error') {
       setMessage(result);
@@ -110,7 +116,9 @@ export default function Publish() {
         deliveryOrLoen: selectedTypeDelivery
       }, {
         withCredentials: true
-      }).then(() => {
+      }).then(async () => {
+        const newMyList = await getAllMyProducts();
+        dispatch(initListOfMyProducts(newMyList));
         setMessage({ message: 'The post was successfully published!', type: 'success' })
         setTimeout(() => {
           changeUrl('/')
@@ -155,7 +163,19 @@ export default function Publish() {
       />
 
       <Upload saveFile={saveFile} />
-      {fileName && <p>{fileName}</p>}
+      {fileName &&
+        <p style={{ textAlign: "center" }}>
+          <span
+            style={{
+              cursor: 'pointer',
+              color: 'grey',
+              display: 'block'
+            }}
+            onClick={clearFile}
+          >x</span>
+          {fileName}
+        </p>
+      }
       <TextField
         icon={<PhoneIcon
           sx={{ m: 1 }} />}

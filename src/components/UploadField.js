@@ -16,7 +16,7 @@ export default function Upload({saveFile}) {
         />
         <label htmlFor="raised-button-file">
         <Button sx={{width:"100%" }}variant="outlined" component="span" className={""}>
-           <AddIcon/>     הוסף תמונה 
+           <AddIcon/>    Add image 
         </Button>
         </label> 
     </Box>

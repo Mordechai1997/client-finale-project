@@ -84,7 +84,7 @@ export function SignUp() {
         Register
       </Button>
       <p> Already have an account? {''}
-        <Button onClick={() => changeUrl('/')} sx={{ textTransform: 'none' }}>
+        <Button onClick={() => changeUrl('/login')} sx={{ textTransform: 'none' }}>
           Sign in
         </Button>
       </p>

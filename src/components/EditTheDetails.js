@@ -14,10 +14,12 @@ import TextField from './TextField';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
-import { validFullName, validPhoneNumber, validEmail } from './Valid';
+import { validFullName, validEmail } from './Valid';
+import { LogIn } from './userLogInSlice';
 
 export default function EditTheDetails() {
 
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const userLogIn = useSelector((state) => state.reducer.userlogin.userInfo);
     const [message, setMessage] = useState(null);
@@ -32,8 +34,10 @@ export default function EditTheDetails() {
 
 
 
-    const changeUrl = (url) => {
-        navigate(url)
+    const initDetails = () => {
+        setEmail(userLogIn.email ? userLogIn.email : '')
+        setFullName(userLogIn.username ? userLogIn.username : '')
+        setPhoneNumber(userLogIn.phoneNumber ? userLogIn.phoneNumber : '')
     }
     const handleSubmit = () => {
         setMessage('')
@@ -50,6 +54,9 @@ export default function EditTheDetails() {
             updateUserDetails()
             changeBtn();
         }
+        setTimeout(() => {
+            setMessage('')
+        }, 5000)
 
     }
     const validForm = () => {
@@ -65,11 +72,6 @@ export default function EditTheDetails() {
         if (valid.type !== 'success') {
             isValid = false;
             setErrorFullName(valid);
-        }
-        valid = validPhoneNumber(phoneNumber);
-        if (valid.type !== 'success') {
-            isValid = false;
-            setErrorPhoneNumber(valid);
         }
         if (isValid && userLogIn && userLogIn.email === email && userLogIn.username === fullName && userLogIn.phoneNumber === phoneNumber) {
             isValid = false;
@@ -91,9 +93,13 @@ export default function EditTheDetails() {
         }, {
             withCredentials: true
         }).then((res) => {
-            console.log(res.data.newUser)
-            setMessage({ message: 'success', type: 'success' })
-
+            setMessage({ message: res?.data?.message, type: res?.data?.type })
+            if (res?.data?.type === 'success' && res.data.data)
+                dispatch(LogIn(res?.data?.data));
+            else
+                initDetails()
+        }).catch((err) => {
+            console.log(err)
         }).finally(() => {
             setErrorEmail('')
             setErrorFullName('')
@@ -138,17 +144,28 @@ export default function EditTheDetails() {
                     value={phoneNumber}
                     setValue={setPhoneNumber}
                     disabled={disabled}
-                    required={!disabled}
+                    required={false}
                     errorMessage={messagePhoneNumber && messagePhoneNumber.message}
                     max={10}
 
                 />
+                {
+                    !disabled &&
+                    <Button
+                        className={`cancel-btn-details`}
+                        variant="outlined"
+                        onClick={() => setDisable(prev => !prev)}
+                        sx={{ width: 80, height: 45 }}
 
+                    >
+                        Cancel
+                    </Button>
+                }
                 <Button
                     className={` ${disabled ? 'Edit' : 'Save'}-btn-Details`}
                     variant="contained"
                     onClick={handleSubmit}
-                    sx={{ width: 80, backgroundColor: "linear-gradient(145deg, black, blue)" }}
+                    sx={{ width: 80, height: 45, backgroundColor: "linear-gradient(145deg, black, blue)" }}
 
                 >
                     {disabled ? 'Edit' : 'Save'}

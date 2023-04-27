@@ -29,9 +29,9 @@ import { useNavigate } from 'react-router';
 import DraggableDialog from './PopUp'
 
 const pages = [
-    { text: 'All products', icon: <CategoryOutlinedIcon />, link: '/publish' },
+    { text: 'My products', icon: <CategoryOutlinedIcon />, link: '/my-products' },
     { text: 'New product', icon: <AddchartOutlinedIcon />, link: '/publish' },
-    { text: 'My products', icon: <AssignmentIndOutlinedIcon />, link: '/publish' }];
+    { text: 'My favorit products', icon: <AssignmentIndOutlinedIcon />, link: '/favorit-products' }];
 const settings = ['My profile', 'Logout'];
 
 export default function ResponsiveNavBar() {
@@ -67,7 +67,7 @@ export default function ResponsiveNavBar() {
     const handleOk = () => {
         setOpenPopUp(false)
         dispatch(LogOut());
-        changeUrl('/');
+        changeUrl('/login');
     }
     const list = () => (
         <Box
@@ -174,7 +174,7 @@ export default function ResponsiveNavBar() {
                         <Tooltip title={userLogIn.username}>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar
-                                    alt={userLogIn.username.charAt(0).toUpperCase()}
+                                    alt={userLogIn?.username?.charAt(0).toUpperCase()}
                                     src="/static/images/avatar/2.jpg" />
                             </IconButton>
                         </Tooltip>

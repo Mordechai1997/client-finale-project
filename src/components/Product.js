@@ -15,26 +15,35 @@ import AdvancedCarousel from './AdvancedCarousel';
 import Axios from 'axios';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useDispatch, useSelector } from 'react-redux';
+import { addLikeProduct, removeFavoritProduct } from '../services/ApiServicesProduct';
+import { initFavoritProducts } from './listProductsSlice';
 
 export default function Product() {
+
+    const dispatch = useDispatch();
     const { state } = useLocation();
     const [searchParams, setSearchParams] = useSearchParams();
     const [data, setData] = useState(state);
     const [dataUser, setDataUser] = useState(null);
     const [visitDate, setVisitDate] = useState("");
     const [openPopUp, setOpenPopUp] = useState(false);
-    const [like, setLike] = useState(false);
     const [listProducts, setListProducts] = useState([]);
     const [pageId, setPageId] = useState();
+    const listOfFavoritProducts = useSelector((state) => state.reducer.listProducts.listOfFavoritProducts);
+    const [like, setLike] = useState(listOfFavoritProducts?.some(el => el.product_id === data?.product_id));
+    const userLogIn = useSelector((state) => state.reducer.userlogin.userInfo);
+
 
     useEffect(() => {
         const id = searchParams.get("productId");
-        if (!data || pageId != id) {
+        if (!data || pageId !== id) {
             getProductById(id)
             setDateUpdateProduct();
             setPageId(id);
             initListProducts();
             window.scrollTo(0, 0);
+            setLike(listOfFavoritProducts?.some(el => el.product_id === parseInt(id)))
         }
     })
     const setDateUpdateProduct = () => {
@@ -84,8 +93,29 @@ export default function Product() {
                 withCredentials: true
             })
             setData(res.data);
+
         } catch (err) {
             console.log(err)
+        }
+    }
+    const handleLike = async () => {
+        debugger
+        await setLikeProduct(!like);
+        setLike(prev => !prev);
+    }
+
+    const setLikeProduct = async (myLike) => {
+        debugger
+        if (myLike){
+            const list = listOfFavoritProducts.slice();
+            list.push(data)
+            dispatch(initFavoritProducts(list));
+            await addLikeProduct(data.product_id, userLogIn.userId)
+        }
+        else {
+            const list = listOfFavoritProducts.filter(i => i.product_id !== data.product_id);
+            dispatch(initFavoritProducts(list));
+            await removeFavoritProduct(data.product_id, userLogIn.userId)
         }
     }
     const PopUpContactInformation = () => {
@@ -133,12 +163,12 @@ export default function Product() {
                         <p className=''><span className='title'>Addres: </span>{data.city} {data.street && `street ${data.street} `}{data.numberAtHome && `number ${data.numberAtHome}`}</p>
                     </span>
                     <span >
-                        <p className='title'>{data.delivery_or_loen == 1 ? `delivery product` : `loaner product`}</p>
+                        <p className='title'>{data.delivery_or_loen === 1 ? `delivery product` : `loaner product`}</p>
                     </span>
                     <div style={{ display: "flex", justifyContent: "space-between", marginTop: "10px" }}>
                         <IconButton
                             aria-label="add to favorites"
-                            onClick={() => setLike(!like)}
+                            onClick={handleLike}
                             sx={{ color: `${like ? "#ff00009c" : "none"}` }}
                         >
                             <FavoriteIcon />
@@ -153,6 +183,6 @@ export default function Product() {
             </div>
         </div>
     </>}
-        <Box style={{ marginTop: "60px" }}>{listProducts[0] && <AdvancedCarousel list={listProducts} />}</Box>
+        <Box style={{ marginTop: "60px" }}>{listProducts[0] && <AdvancedCarousel list={listProducts.filter(i => i.product_id !== data.product_id)} />}</Box>
     </Box>);
 }

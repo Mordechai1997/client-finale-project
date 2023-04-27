@@ -5,29 +5,32 @@ import { SERVER_URL, BASE_ROUTE } from '../constants';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { LogIn, LogOut } from "./userLogInSlice";
+import { isAuth } from '../services/ApiServicesUser';
+import { initFavoritProducts, initListOfMyProducts } from './listProductsSlice';
 
-export default function ProtectedRoute ({ children }) {
+export default function ProtectedRoute({ children }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true)
+  const userLogIn = useSelector((state) => state.reducer.userlogin.userInfo);
 
   useEffect(() => {
-    isAuth();
+    getIsAuth();
   }, [])
 
-  const isAuth = async () => {
+  const getIsAuth = async () => {
     try {
-        const data  = await axios.get(`${SERVER_URL}/${BASE_ROUTE.AUTH}`, {
-        withCredentials: true
-      })
-      dispatch(LogIn(data.data.userInfo));
+      const data = await isAuth();
+      console.log(data)
+      dispatch(LogIn(data?.userInfo));
+      dispatch(initFavoritProducts(data?.listOfFavoritProducts));
+      dispatch(initListOfMyProducts(data?.listOfMyProducts));
       setIsLoading(false)
     } catch (err) {
-        setIsLoading(false)
-      navigate('/')
+      navigate('/login')
     }
   }
   return (<>
-  {isLoading? "Loading....":children}
+    {isLoading ? "Loading...." : children}
   </>);
 }
