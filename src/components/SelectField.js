@@ -5,7 +5,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 
-export default function SelectField({value,label, style, list, handleChange}) {
+export default function SelectField({value,label, style, list, handleChange, disabled}) {
 
   return (
     <FormControl variant="standard" sx={{ m: 1, minWidth: 120, ...style }}>
@@ -16,6 +16,7 @@ export default function SelectField({value,label, style, list, handleChange}) {
         value={value}
         onChange={(e)=>handleChange(e.target.value)}
         label="Age"
+        disabled={disabled}
       >
         <MenuItem value="">
           <em>None</em>

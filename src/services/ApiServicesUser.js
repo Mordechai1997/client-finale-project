@@ -13,3 +13,15 @@ export const isAuth = async () => {
         throw err;
     }
 }
+
+export const getAllUserNotifications = async () => {
+    try {
+        const data = await Axios.get(`${SERVER_URL}/${BASE_ROUTE.GETALLUSERNOTFICATIONS}`, {
+            withCredentials: true
+        })
+        return data.data;
+
+    } catch (err) {
+        throw err;
+    }
+}

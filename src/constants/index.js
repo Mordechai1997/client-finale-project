@@ -3,5 +3,6 @@ export const BASE_ROUTE = {
     USERS: 'users',
     AUTH: 'auth',
     SIGNUP: 'signup',
-    PRODUCTS: 'products'
+    PRODUCTS: 'products',
+    GETALLUSERNOTFICATIONS:'getAllUserNotifications'
 }

@@ -27,6 +27,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { LogOut } from './userLogInSlice';
 import { useNavigate } from 'react-router';
 import DraggableDialog from './PopUp'
+import { getAllUserNotifications } from '../services/ApiServicesUser';
+import AlertItem from './AlertItem';
 
 const pages = [
     { text: 'My products', icon: <CategoryOutlinedIcon />, link: '/my-products' },
@@ -42,6 +44,10 @@ export default function ResponsiveNavBar() {
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [state, setState] = useState(false);
     const [openPopUp, setOpenPopUp] = useState(false);
+    const [allNotifications, setAllNotifications] = useState([]);
+    const [openAlerts, setOpenAlerts] = useState(false);
+
+
 
     const isMobile = navigator.userAgentData.mobile;
 
@@ -68,6 +74,11 @@ export default function ResponsiveNavBar() {
         setOpenPopUp(false)
         dispatch(LogOut());
         changeUrl('/login');
+    }
+    const getAllNotifications = async () => {
+        const data = await getAllUserNotifications();
+        setAllNotifications(data);
+        setOpenAlerts(prev => !prev);
     }
     const list = () => (
         <Box
@@ -165,11 +176,38 @@ export default function ResponsiveNavBar() {
                             </Button>
                         ))}
                     </Box>
-                    {userLogIn && <IconButton sx={{ size: "large", color: "inherit", mr: 2 }}>
-                        <Badge badgeContent={17} color="error">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>}
+                    {userLogIn &&
+                        <Box>
+                            <IconButton
+                                onClick={getAllNotifications}
+                                sx={{ size: "large", color: "inherit", mr: 2 }}>
+                                <Badge badgeContent={17} color="error">
+                                    <NotificationsIcon />
+                                </Badge>
+                            </IconButton>
+                            <Menu
+                                sx={{ mt: '45px' }}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={(openAlerts)}
+                                onClose={() => setOpenAlerts(false)}
+                            >
+
+                                {allNotifications.map((alert, index) => (
+                                    <AlertItem  key={index} alert={alert}/>
+                                ))}
+                            </Menu>
+                        </Box>
+                    }
                     {userLogIn ? <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title={userLogIn.username}>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

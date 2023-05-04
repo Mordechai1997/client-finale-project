@@ -16,6 +16,7 @@ import Profile from './Profile';
 import FavoritProductsPage from './FavoritProductsPage';
 import OpenRoute from './OpenRoute';
 import MyProductsPage from './MyProductsPage';
+import EditProduct from './EditProduct';
 
 
 function App() {
@@ -47,6 +48,8 @@ function App() {
           <Route path="/Profile" element={<ProtectedRoute children={<Profile />} />} />
           <Route path="/favorit-products" element={<ProtectedRoute children={<FavoritProductsPage />} />} />
           <Route path="/my-products" element={<ProtectedRoute children={<MyProductsPage />} />} />
+          <Route path="/editProduct" element={<ProtectedRoute children={<EditProduct />} />} />
+
         </Routes>
         {userLogIn && <ButtonAddNewProduct />}
       </BrowserRouter>

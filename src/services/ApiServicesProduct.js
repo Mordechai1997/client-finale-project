@@ -42,3 +42,23 @@ export const getAllMyProducts = async () => {
     }
 
 }
+export const getProductByIdApi = async (id) => {
+    try {
+        const res = await Axios.get(`${SERVER_URL}/${BASE_ROUTE.PRODUCTS}/getProductById?id=${id}`, {
+            withCredentials: true
+        })
+        return res.data;
+    } catch (err) {
+        return err
+    }
+}
+export const getMyProductByIdApi = async (id) => {
+    try {
+        const res = await Axios.get(`${SERVER_URL}/${BASE_ROUTE.PRODUCTS}/getProductById?id=${id}`, {
+            withCredentials: true
+        })
+        return res.data;
+    } catch (err) {
+        return err
+    }
+}

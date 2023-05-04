@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { SERVER_URL } from '../constants';
-import { useSearchParams, useLocation } from 'react-router-dom';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import Box from "@mui/material/Box";
 import './product.css'
 import Button from '@mui/material/Button';
@@ -16,12 +16,13 @@ import Axios from 'axios';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useDispatch, useSelector } from 'react-redux';
-import { addLikeProduct, removeFavoritProduct } from '../services/ApiServicesProduct';
+import { addLikeProduct, getProductByIdApi, removeFavoritProduct } from '../services/ApiServicesProduct';
 import { initFavoritProducts } from './listProductsSlice';
 
 export default function Product() {
-
+    const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const { state } = useLocation();
     const [searchParams, setSearchParams] = useSearchParams();
     const [data, setData] = useState(state);
@@ -31,23 +32,33 @@ export default function Product() {
     const [listProducts, setListProducts] = useState([]);
     const [pageId, setPageId] = useState();
     const listOfFavoritProducts = useSelector((state) => state.reducer.listProducts.listOfFavoritProducts);
+    const listOfMyProducts = useSelector((state) => state.reducer.listProducts.listOfMyProducts);
     const [like, setLike] = useState(listOfFavoritProducts?.some(el => el.product_id === data?.product_id));
     const userLogIn = useSelector((state) => state.reducer.userlogin.userInfo);
 
 
     useEffect(() => {
         const id = searchParams.get("productId");
-        if (!data || pageId !== id) {
-            getProductById(id)
-            setDateUpdateProduct();
-            setPageId(id);
-            initListProducts();
-            window.scrollTo(0, 0);
-            setLike(listOfFavoritProducts?.some(el => el.product_id === parseInt(id)))
+        if (listOfMyProducts?.some(el => el.product_id + '' === id)) {
+            navigate(`/editProduct?productId=${id}`);
+            return
         }
+        if (!data || pageId !== id) {
+            initAllState(id);
+        }
+
     })
-    const setDateUpdateProduct = () => {
-        const tempDate = new Date(data.updatedAt);
+    const initAllState = async (id) => {
+        const res = await getProductById(id)
+        setData(res)
+        setDateUpdateProduct(res.updatedAt);
+        setPageId(id);
+        initListProducts();
+        window.scrollTo(0, 0);
+        setLike(listOfFavoritProducts?.some(el => el.product_id === parseInt(id)))
+    }
+    const setDateUpdateProduct = (updatedAt) => {
+        const tempDate = new Date(updatedAt);
         var year = tempDate.getFullYear();
         var mes = tempDate.getMonth() + 1;
         var dia = tempDate.getDate();
@@ -76,7 +87,7 @@ export default function Product() {
     const handleContactInformation = async () => {
         setOpenPopUp(false);
         try {
-            const res = await Axios.get(`${SERVER_URL}/getEmailUserByMemberId?id=${data.user_id}`, {
+            const res = await Axios.get(`${SERVER_URL}/getEmailUserByMemberId?id=${data.user_id}&productId=${data.product_id}`, {
                 withCredentials: true
             })
             if (res.data) {
@@ -89,24 +100,19 @@ export default function Product() {
     }
     const getProductById = async (id) => {
         try {
-            const res = await Axios.get(`${SERVER_URL}/products/getProductById?id=${id}`, {
-                withCredentials: true
-            })
-            setData(res.data);
-
+            const resData = await getProductByIdApi(id)
+            return resData;
         } catch (err) {
             console.log(err)
         }
     }
     const handleLike = async () => {
-        debugger
         await setLikeProduct(!like);
         setLike(prev => !prev);
     }
 
     const setLikeProduct = async (myLike) => {
-        debugger
-        if (myLike){
+        if (myLike) {
             const list = listOfFavoritProducts.slice();
             list.push(data)
             dispatch(initFavoritProducts(list));
