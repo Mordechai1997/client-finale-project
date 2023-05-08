@@ -153,7 +153,7 @@ export default function Product() {
         <div className='main-product' >
             <div className='details-product'>
                 <div>
-                    <img className='img-product' src={`${data.image_name ? `${SERVER_URL}/${data.image_name}` : "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=250&h=200&fit=crop&auto=format"}`} />
+                    <img className='img-product' src={`${data.image_name ? `${SERVER_URL}/${data.image_name}` : "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=250&h=200&fit=crop&auto=format"}`} alt={data.title} />
                 </div>
                 <div className='text-details'>
                     <span >

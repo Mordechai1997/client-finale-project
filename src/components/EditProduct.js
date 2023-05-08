@@ -20,9 +20,10 @@ import { Box } from '@mui/system';
 import ApartmentSharpIcon from '@mui/icons-material/ApartmentSharp';
 import { SERVER_URL, BASE_ROUTE } from '../constants';
 import useAllCategorys from '../Hooks/useAllCategorys';
-import { getAllMyProducts, getMyProductByIdApi } from '../services/ApiServicesProduct';
+import { getAllMyProducts, getMyProductByIdApi, uploadImage, updateMyProduct } from '../services/ApiServicesProduct';
 import { initListOfMyProducts } from './listProductsSlice';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import ImgBackUi from './ImgBackUi';
 
 const listTypeDelivery = [{
     CategoryId: 1,
@@ -74,8 +75,6 @@ export default function EditProduct() {
     const initAllState = async (id) => {
         const res = await getMyProductById(id)
         window.scrollTo(0, 0);
-
-        console.log(res)
         if (res) {
             setData(res)
             setPageId(id);
@@ -86,6 +85,7 @@ export default function EditProduct() {
             setNnumberAtHome(res.numberAtHome)
             setDescription(res.description)
             setCity(res.city)
+            setFileName(res.image_name);
             setSelected(listSelect?.findIndex(i => i.CategoryName === res.CategoryName) + 1)
             setSelectedTypeDelivery(listTypeDelivery?.findIndex(i => i.CategoryId === res.delivery_or_loen) + 1)
         }
@@ -116,22 +116,18 @@ export default function EditProduct() {
         return /^\d+$/.test(str);
     }
     const saveFile = (e) => {
-        console.log(e.target.files[0].size);
         setFile(e.target.files[0]);
         setFileName(e.target.files[0].name);
     }
     const clearFile = () => {
+        if (disabled) {
+            return;
+        }
         setFile(null);
-        setFileName(null);
+        setFileName("");
     }
     const setCityProduct = (e) => {
         setCity(e);
-        // try{
-        //   Axios.get('https://data.gov.il/api/3/action/datastore_search?resource_id=d4901968-dad3-4845-a9b0-a57d027f11ab&q='+city
-        //   ).then((e)=>console.log(e))
-        // }catch(err){
-        //   console.log(err)
-        // }
     }
     const handleSubmit = async () => {
         const result = validPublic(selected, title, fileName, phone, city, selectedTypeDelivery)
@@ -144,32 +140,17 @@ export default function EditProduct() {
             if (file) {
                 const data = new FormData();
                 data.append('file', file);
-                const response = await fetch(`${SERVER_URL}/products/uploadimage`, {
-                    method: 'POST',
-                    body: data
-                })
+                const response = await uploadImage(data)
             }
-            await Axios.post(`${SERVER_URL}/products/addproduct`, {
-                userId: userLogIn.userId,
-                categoryType: selected,
-                title,
-                fileName,
-                phone,
-                city,
-                street,
-                description,
-                numberAtHome,
-                deliveryOrLoen: selectedTypeDelivery
-            }, {
-                withCredentials: true
-            }).then(async () => {
-                const newMyList = await getAllMyProducts();
-                dispatch(initListOfMyProducts(newMyList));
-                setMessage({ message: 'The post was successfully published!', type: 'success' })
-                setTimeout(() => {
-                    changeUrl('/')
-                }, 100)
-            })
+            const resUpdate = await updateMyProduct(data.product_id,userLogIn.userId, selected, title, fileName, phone, city, street, description, numberAtHome, selectedTypeDelivery)
+
+            const newMyList = await getAllMyProducts();
+            dispatch(initListOfMyProducts(newMyList));
+            setMessage({ message: 'The post was successfully update!', type: 'success' })
+            // setTimeout(() => {
+            //     changeUrl('/')
+            // }, 100)
+
         } catch (err) {
             console.log(err);
             setMessage({ message: 'Something is wrong Try again!', type: 'error' })
@@ -221,23 +202,14 @@ export default function EditProduct() {
 
             />
             {
-                data?.image_name &&
-                <img src={`${SERVER_URL}/${data.image_name}`} alt={data?.title} />
+                fileName &&
+                <ImgBackUi disabled onClick={clearFile} url={`${SERVER_URL}/${fileName}`} file={file} />
 
-            }
-            <Upload saveFile={saveFile} />
-            {fileName &&
-                <p style={{ textAlign: "center" }}>
-                    <span
-                        style={{
-                            cursor: 'pointer',
-                            color: 'grey',
-                            display: 'block'
-                        }}
-                        onClick={clearFile}
-                    >x</span>
-                    {fileName}
-                </p>
+                // <img style={{ width: "85%", height: "200px" }} src={`${SERVER_URL}/${fileName}`} alt={fileName} />
+
+            }{
+                !disabled &&
+                <Upload textBtn={fileName ? "Change image" : false} saveFile={saveFile} />
             }
             <TextField
                 icon={<PhoneIcon
@@ -291,11 +263,24 @@ export default function EditProduct() {
                     {message.message}
                 </Alert>
             }
+            {
+                !disabled &&
+                <Button
+                    variant={"contained"}
+                    onClick={handleSubmit}
+                >
+                    Save
+                </Button>
+            }
             <Button
-                variant="outlined"
+                variant={disabled ? "contained" : "outlined"}
                 onClick={handelEditBtn}
             >
                 {disabled ? 'Edit' : 'Cancel'}
+            </Button>
+
+            <Button variant="contained" color="error">
+                Delete
             </Button>
         </Form>
     );

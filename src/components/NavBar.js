@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -49,8 +49,16 @@ export default function ResponsiveNavBar() {
 
 
 
-    const isMobile = navigator.userAgentData.mobile;
-
+    // const isMobile = navigator.userAgentData.mobile;
+    useEffect(() => {
+        if (userLogIn) {
+            initNotifications()
+        }
+    }, [userLogIn])
+    const initNotifications = async () => {
+        const data = await getAllUserNotifications();
+        setAllNotifications(data);
+    }
     const changeUrl = (url) => {
         navigate(url)
     }
@@ -75,9 +83,7 @@ export default function ResponsiveNavBar() {
         dispatch(LogOut());
         changeUrl('/login');
     }
-    const getAllNotifications = async () => {
-        const data = await getAllUserNotifications();
-        setAllNotifications(data);
+    const OpenAlerts = async () => {
         setOpenAlerts(prev => !prev);
     }
     const list = () => (
@@ -179,9 +185,9 @@ export default function ResponsiveNavBar() {
                     {userLogIn &&
                         <Box>
                             <IconButton
-                                onClick={getAllNotifications}
+                                onClick={OpenAlerts}
                                 sx={{ size: "large", color: "inherit", mr: 2 }}>
-                                <Badge badgeContent={17} color="error">
+                                <Badge badgeContent={allNotifications.filter((i) => !i.userViewedTheAlert).length} color="error">
                                     <NotificationsIcon />
                                 </Badge>
                             </IconButton>
@@ -202,8 +208,8 @@ export default function ResponsiveNavBar() {
                                 onClose={() => setOpenAlerts(false)}
                             >
 
-                                {allNotifications.map((alert, index) => (
-                                    <AlertItem  key={index} alert={alert}/>
+                                {allNotifications?.map((alert, index) => (
+                                    <AlertItem key={index} alert={alert} />
                                 ))}
                             </Menu>
                         </Box>

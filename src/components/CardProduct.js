@@ -37,6 +37,9 @@ export default function CardProduct({ item, fromFavoritProductsPage = false, fro
   const navigateToProductPage = () => {
     if (!isMyProduct)
       navigate(`/Product?productId=${item.product_id}`, { state: item });
+    else
+      navigate(`/editProduct?productId=${item.product_id}`, { state: item });
+
   }
 
   const handleLike = async () => {

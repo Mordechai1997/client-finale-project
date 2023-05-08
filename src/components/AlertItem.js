@@ -1,7 +1,7 @@
 import { Box, MenuItem, Typography } from "@mui/material";
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import { useNavigate } from "react-router-dom";
 
 function AlertItem({ alert }) {
@@ -26,7 +26,7 @@ function AlertItem({ alert }) {
     }
     const likeAlert = () => {
         return (
-            <Box onClick={navigateProduct}>
+            <Box>
                 <ThumbUpOffAltIcon fontSize="small" />
                 {" "}
                 Congratulations you got a new like for your product
@@ -35,7 +35,7 @@ function AlertItem({ alert }) {
     }
     const ViewAlert = () => {
         return (
-            <Box onClick={navigateProduct}>
+            <Box >
                 <VisibilityIcon fontSize="small" />
                 {" "}
                 Someone viewed your product
@@ -44,16 +44,16 @@ function AlertItem({ alert }) {
     }
     const deletionAlert = () => {
         return (
-            <Box onClick={navigateProduct}>
-                <DeleteForeverIcon fontSize="small" />
+            <Box >
+                <TipsAndUpdatesIcon fontSize="small" />
                 {" "}
-                If the product is not relevant, it should be removed from the site
+                Update reminder for your product
             </Box>
         )
     }
     return (
-        <MenuItem sx={{ backgroundColor: `${alert.userViewedTheAlert ? "#fff" : '#afdbf578'}`, borderBottom: '1px solid #80808045' }}>
-            <Typography textAlign="center">
+        <MenuItem  onClick={navigateProduct} sx={{ backgroundColor: `${alert.userViewedTheAlert ? "#fff" : '#afdbf578'}`, borderBottom: '1px solid #80808045' }}>
+            <Typography textAlign="center" component={'div'}>
                 {getMsgByType(alert?.typeNotification)}
             </Typography>
         </MenuItem>
