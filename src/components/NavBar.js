@@ -29,10 +29,11 @@ import { useNavigate } from 'react-router';
 import DraggableDialog from './PopUp'
 import { getAllUserNotifications } from '../services/ApiServicesUser';
 import AlertItem from './AlertItem';
+import HomeIcon from '@mui/icons-material/Home';
 
 const pages = [
+    { text: 'Home', icon: <HomeIcon />, link: '/' },
     { text: 'My products', icon: <CategoryOutlinedIcon />, link: '/my-products' },
-    { text: 'New product', icon: <AddchartOutlinedIcon />, link: '/publish' },
     { text: 'My favorit products', icon: <AssignmentIndOutlinedIcon />, link: '/favorit-products' }];
 const settings = ['My profile', 'Logout'];
 
@@ -54,7 +55,7 @@ export default function ResponsiveNavBar() {
         if (userLogIn) {
             initNotifications()
         }
-    }, [userLogIn])
+    },[userLogIn])
     const initNotifications = async () => {
         const data = await getAllUserNotifications();
         setAllNotifications(data);
@@ -209,7 +210,7 @@ export default function ResponsiveNavBar() {
                             >
 
                                 {allNotifications?.map((alert, index) => (
-                                    <AlertItem key={index} alert={alert} />
+                                    <AlertItem key={index} alert={alert} initNotifications={initNotifications}/>
                                 ))}
                             </Menu>
                         </Box>

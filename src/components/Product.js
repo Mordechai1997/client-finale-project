@@ -184,7 +184,7 @@ export default function Product() {
                         </Button>
                     </div>
 
-                    <DraggableDialog content={PopUpContactInformation()} open={openPopUp} handleClose={() => setOpenPopUp(false)} />
+                    <DraggableDialog content={PopUpContactInformation()} open={openPopUp} handleOk={() => setOpenPopUp(false)} />
                 </div>
             </div>
         </div>

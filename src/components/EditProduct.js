@@ -20,10 +20,11 @@ import { Box } from '@mui/system';
 import ApartmentSharpIcon from '@mui/icons-material/ApartmentSharp';
 import { SERVER_URL, BASE_ROUTE } from '../constants';
 import useAllCategorys from '../Hooks/useAllCategorys';
-import { getAllMyProducts, getMyProductByIdApi, uploadImage, updateMyProduct } from '../services/ApiServicesProduct';
+import { getAllMyProducts, getMyProductByIdApi, uploadImage, updateMyProduct, deleteMyProduct } from '../services/ApiServicesProduct';
 import { initListOfMyProducts } from './listProductsSlice';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import ImgBackUi from './ImgBackUi';
+import DraggableDialog from './PopUp';
 
 const listTypeDelivery = [{
     CategoryId: 1,
@@ -60,7 +61,7 @@ export default function EditProduct() {
     const [selectedTypeDelivery, setSelectedTypeDelivery] = useState('');
     const [pageId, setPageId] = useState();
     const [disabled, setdisabled] = useState(true);
-
+    const [openPopUp, setOpenPopUp] = useState(false);
 
     useEffect(() => {
         const id = searchParams.get("productId");
@@ -98,9 +99,6 @@ export default function EditProduct() {
         } catch (err) {
             console.log(err)
         }
-    }
-    const changeUrl = (url) => {
-        navigate(url)
     }
     const setPhoneNumber = (e) => {
         if (containsOnlyNumbers(e) || !e) {
@@ -142,14 +140,14 @@ export default function EditProduct() {
                 data.append('file', file);
                 const response = await uploadImage(data)
             }
-            const resUpdate = await updateMyProduct(data.product_id,userLogIn.userId, selected, title, fileName, phone, city, street, description, numberAtHome, selectedTypeDelivery)
+            const resUpdate = await updateMyProduct(data.product_id, userLogIn.userId, selected, title, fileName, phone, city, street, description, numberAtHome, selectedTypeDelivery)
 
             const newMyList = await getAllMyProducts();
             dispatch(initListOfMyProducts(newMyList));
             setMessage({ message: 'The post was successfully update!', type: 'success' })
-            // setTimeout(() => {
-            //     changeUrl('/')
-            // }, 100)
+            setTimeout(()=>{
+                navigate(`/`);
+            },1000)
 
         } catch (err) {
             console.log(err);
@@ -164,8 +162,20 @@ export default function EditProduct() {
             window.scrollTo(0, 0);
         }
     }
+    const handelClickDelete = () => {
+        setOpenPopUp(true)
+    }
+    const deleteProduct =()=>{
+        deleteMyProduct(data.product_id)
+        setMessage({ message: 'The delete product was successfully!', type: 'success' })
+        setOpenPopUp(false)
+        setTimeout(()=>{
+            navigate(`/`);
+        },1000)
+    }
     return (
         <Form>
+             <DraggableDialog  title={"Are you sure you want to delete the product?"} open={openPopUp} handleClose={() => setOpenPopUp(false)} handleOk={deleteProduct}/>
             <SelectField
                 list={listSelect}
                 label="Select a category"
@@ -279,7 +289,7 @@ export default function EditProduct() {
                 {disabled ? 'Edit' : 'Cancel'}
             </Button>
 
-            <Button variant="contained" color="error">
+            <Button variant="contained" color="error" onClick={handelClickDelete}>
                 Delete
             </Button>
         </Form>

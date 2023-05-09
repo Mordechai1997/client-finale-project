@@ -28,7 +28,7 @@ export default function DraggableDialog({ title, handleClose, open, handleOk, co
       onClose={handleClose}
       PaperComponent={PaperComponent}
       aria-labelledby="draggable-dialog-title"
-      style={{ maxWidth: "none", maxHeight: "none"}}
+      style={{ maxWidth: "none", maxHeight: "none" }}
     >
       <Box style={{ padding: "30px" }}>
 
@@ -48,7 +48,7 @@ export default function DraggableDialog({ title, handleClose, open, handleOk, co
           {handleClose && <Button variant="outlined" autoFocus onClick={handleClose}>
             Cancel
           </Button>}
-          {handleOk && <Button variant="outlined" onClick={handleOk}>OK</Button>}
+          {handleOk && <Button variant="outlined" style={{ marginLeft: 15}} onClick={handleOk}>OK</Button>}
         </Box>
       </Box>
 

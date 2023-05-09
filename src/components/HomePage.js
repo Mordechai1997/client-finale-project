@@ -79,7 +79,12 @@ export default function HomePage() {
             marginTop: "100px",
         }}>
 
-            <Box >
+            <Box style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100px"
+            }}>
                 {/* <SelectField
                     list={listSelect}
                     label="Select a category"

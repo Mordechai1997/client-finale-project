@@ -14,9 +14,10 @@ import { SERVER_URL, BASE_ROUTE } from '../constants';
 import { useNavigate } from 'react-router-dom';
 import ModeIcon from '@mui/icons-material/Mode';
 import { useDispatch, useSelector } from "react-redux";
-import { addLikeProduct, removeFavoritProduct } from "../services/ApiServicesProduct";
+import { addLikeProduct, deleteMyProduct, removeFavoritProduct } from "../services/ApiServicesProduct";
 import { initFavoritProducts } from "./listProductsSlice";
 import { Box } from "@mui/material";
+import DraggableDialog from "./PopUp";
 
 export default function CardProduct({ item, fromFavoritProductsPage = false, fromMyProductsPage = false }) {
 
@@ -29,6 +30,9 @@ export default function CardProduct({ item, fromFavoritProductsPage = false, fro
 
   const [like, setLike] = useState(fromFavoritProductsPage ? true : listOfFavoritProducts?.some(el => el.product_id === item.product_id));
   const [isMyProduct, setIsMyProduct] = useState(fromMyProductsPage ? true : listOfMyProducts?.some(el => el.product_id === item.product_id));
+  const [openPopUp, setOpenPopUp] = useState(false);
+  const [openPopUpSuccess, setOpenPopUpSuccess] = useState(false);
+
 
   useEffect(() => {
     setIsMyProduct(fromMyProductsPage ? true : listOfMyProducts?.some(el => el.product_id === item.product_id));
@@ -62,58 +66,75 @@ export default function CardProduct({ item, fromFavoritProductsPage = false, fro
       await removeFavoritProduct(item.product_id, userLogIn.userId)
     }
   }
+  const handelClickDelete = () => {
+    setOpenPopUp(true)
+  }
+  const deleteProduct = () => {
+    deleteMyProduct(item.product_id)
+    setOpenPopUp(false);
+    setOpenPopUpSuccess(true)
+    setTimeout(() => {
+      navigate(`/`);
+    }, 1000)
+  }
 
   return (
-    <Card
-      sx={{
-        maxWidth: 345,
-        borderRadius: "8px",
-        position: "relative",
-        m: 2,
-        flex: '1 1 30%',
+    <>
+      <DraggableDialog title={"Are you sure you want to delete the product?"} open={openPopUp} handleClose={() => setOpenPopUp(false)} handleOk={deleteProduct} />
+      <DraggableDialog title={<p style={{color:"green"}}>The delete was successfully</p>} open={openPopUpSuccess} handleOk={() => setOpenPopUpSuccess(false)} />
 
-      }}
-    >
-      <CardMedia
-        style={{ cursor: "pointer" }}
-        component="img"
-        height="194"
-        image={item.image_name ? `${SERVER_URL}/${item.image_name}` : "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=250&h=200&fit=crop&auto=format"}
-        alt="Paella dish"
-        onClick={navigateToProductPage}
-      />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {item.title}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        {isMyProduct ?
-          <Box>
-            <IconButton aria-label="share">
-              <DeleteForeverIcon />
-            </IconButton>
-            <IconButton>
-              <ModeIcon />
-            </IconButton>
-          </Box> :
-          <Box>
-            <IconButton
-              aria-label="add to favorites"
-              onClick={handleLike}
-              sx={{ color: `${like ? "#ff00009c" : "none"}` }}
-            >
-              <FavoriteIcon />
-            </IconButton>
-            <IconButton aria-label="share">
-              <ShareIcon />
-            </IconButton>
-          </Box>
-        }
-        <Typography sx={{ right: "0", position: "absolute", m: 2 }}>
-          {item.CategoryName}
-        </Typography>
-      </CardActions>
-    </Card>
+      <Card
+        sx={{
+          maxWidth: 345,
+          borderRadius: "8px",
+          position: "relative",
+          m: 2,
+          flex: '1 1 30%',
+
+        }}
+      >
+        <CardMedia
+          style={{ cursor: "pointer" }}
+          component="img"
+          height="194"
+          image={item.image_name ? `${SERVER_URL}/${item.image_name}` : "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=250&h=200&fit=crop&auto=format"}
+          alt="Paella dish"
+          onClick={navigateToProductPage}
+        />
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {item.title}
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing>
+          {isMyProduct ?
+            <Box>
+              <IconButton aria-label="share">
+                <DeleteForeverIcon onClick={handelClickDelete} />
+              </IconButton>
+              <IconButton>
+                <ModeIcon onClick={navigateToProductPage} />
+              </IconButton>
+            </Box> :
+            <Box>
+              <IconButton
+                aria-label="add to favorites"
+                onClick={handleLike}
+                sx={{ color: `${like ? "#ff00009c" : "none"}` }}
+              >
+                <FavoriteIcon />
+              </IconButton>
+              <IconButton aria-label="share">
+                <ShareIcon />
+              </IconButton>
+            </Box>
+          }
+          <Typography sx={{ right: "0", position: "absolute", m: 2 }}>
+            {item.CategoryName}
+          </Typography>
+        </CardActions>
+      </Card>
+    </>
+
   );
 }

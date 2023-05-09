@@ -96,3 +96,29 @@ export const updateMyProduct = async (productId, userId, selected, title, fileNa
         return err
     }
 }
+
+export const deleteMyProduct = async (productId) => {
+    try {
+        const response = await Axios.post(`${SERVER_URL}/products/deleteMyProduct`, {
+            id: productId
+        }, {
+            withCredentials: true
+        })
+        return response;
+    } catch (err) {
+        return err
+    }
+}
+export const userViewedTheAlert = async (notificationId) => {
+    try {
+        debugger
+        const response = await Axios.post(`${SERVER_URL}/products/userViewedTheAlert`, {
+            id: notificationId
+        }, {
+            withCredentials: true
+        })
+        return response;
+    } catch (err) {
+        return err
+    }
+}
