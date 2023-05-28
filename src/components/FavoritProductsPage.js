@@ -28,7 +28,7 @@ export default function FavoritProductsPage() {
         }}>
             {isLoading ? <Spinner isLoading={isLoading} /> :
                 <>{listOfFavoritProducts[0] ? <div
-                    className="cointener"
+                    className="cointener-favorit-products"
                     style={{
                         display: "flex",
                         flexWrap: "wrap",

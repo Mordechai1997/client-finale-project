@@ -30,6 +30,7 @@ import DraggableDialog from './PopUp'
 import { getAllUserNotifications } from '../services/ApiServicesUser';
 import AlertItem from './AlertItem';
 import HomeIcon from '@mui/icons-material/Home';
+import EmailIcon from '@mui/icons-material/Email';
 
 const pages = [
     { text: 'Home', icon: <HomeIcon />, link: '/' },
@@ -55,7 +56,7 @@ export default function ResponsiveNavBar() {
         if (userLogIn) {
             initNotifications()
         }
-    },[userLogIn])
+    }, [userLogIn])
     const initNotifications = async () => {
         const data = await getAllUserNotifications();
         setAllNotifications(data);
@@ -97,7 +98,7 @@ export default function ResponsiveNavBar() {
                 {pages.map((item, index) => (
                     <Button
                         onClick={() => changeUrl(item.link)}
-                        sx={{ my: 2, color: 'black', display: 'block' }}
+                        sx={{ width: "100%", color: 'black', display: 'block' }}
                         key={item.text}
                     >
                         <ListItem button  >
@@ -117,7 +118,7 @@ export default function ResponsiveNavBar() {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
-                        variant="h6"
+                        variant="span"
                         noWrap
                         onClick={() => changeUrl('/')}
                         sx={{
@@ -131,7 +132,7 @@ export default function ResponsiveNavBar() {
                             textDecoration: 'none',
                         }}
                     >
-                        LOGO
+                        <img src='../my-logo.gif' alt="logo" style={{ width: '80px', height: '80px' }} />
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
@@ -150,30 +151,14 @@ export default function ResponsiveNavBar() {
                             onClose={() => setState(false)}
                             onOpen={() => setState(true)}
                         >
+                            <img src='../my-logo.gif' alt="logo" style={{ width: '50px', height: '50px' }} />
                             {list("left")}
                         </SwipeableDrawer>
                     </Box>
                     {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        onClick={() => changeUrl('/')}
-                        sx={{
-                            mr: 2,
-                            cursor: 'pointer',
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        LOGO
-                    </Typography>
+
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
+                        {userLogIn && pages.map((page) => (
                             <Button
                                 key={page.text}
                                 onClick={() => handleCloseNavMenu(page.link)}
@@ -183,6 +168,8 @@ export default function ResponsiveNavBar() {
                             </Button>
                         ))}
                     </Box>
+                    <EmailIcon sx={{ cursor: 'pointer' }} onClick={() => changeUrl('contact-us')} />
+
                     {userLogIn &&
                         <Box>
                             <IconButton
@@ -210,11 +197,12 @@ export default function ResponsiveNavBar() {
                             >
 
                                 {allNotifications?.map((alert, index) => (
-                                    <AlertItem key={index} alert={alert} initNotifications={initNotifications}/>
+                                    <AlertItem key={index} alert={alert} initNotifications={initNotifications} />
                                 ))}
                             </Menu>
                         </Box>
                     }
+
                     {userLogIn ? <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title={userLogIn.username}>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -253,6 +241,7 @@ export default function ResponsiveNavBar() {
                             onClick={() => changeUrl('/login')}
                             className='btn-login'
                             sx={{
+                                ml: 2,
                                 color: "blue",
                                 background: 'white',
                                 textTransform: 'none'

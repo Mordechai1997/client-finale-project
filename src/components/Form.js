@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 
-export default function Form({children}) {
+export default function Form({children, styleCss}) {
 
   return (
     <Box
@@ -11,6 +11,7 @@ export default function Form({children}) {
       noValidate
       autoComplete="on"
       className='form-login'
+      style={styleCss}
     >
      {children}
     </Box>

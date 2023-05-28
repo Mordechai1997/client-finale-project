@@ -138,9 +138,9 @@ export default function EditProduct() {
             if (file) {
                 const data = new FormData();
                 data.append('file', file);
-                const response = await uploadImage(data)
+                await uploadImage(data)
             }
-            const resUpdate = await updateMyProduct(data.product_id, userLogIn.userId, selected, title, fileName, phone, city, street, description, numberAtHome, selectedTypeDelivery)
+            await updateMyProduct(data.product_id, userLogIn.userId, selected, title, fileName, phone, city, street, description, numberAtHome, selectedTypeDelivery)
 
             const newMyList = await getAllMyProducts();
             dispatch(initListOfMyProducts(newMyList));

@@ -1,43 +1,38 @@
 import { useState, useEffect, useCallback } from 'react';
 import Axios from 'axios';
 import Button from '@mui/material/Button';
-import Alert from '@mui/material/Alert';
-import { PasswordField } from './PasswordField'
-import { validPublic } from './Valid';
-import Form from './Form';
-import { useSelector, useDispatch } from "react-redux";
-import { LogIn, LogOut } from "./userLogInSlice";
-import { useNavigate } from 'react-router';
-import Upload from './UploadField';
-import SelectField from './SelectField';
+import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 import TextField from './TextField';
-import debounce from 'lodash.debounce';
 import Pages from './Pages';
 import { Box } from '@mui/system';
 import CardProduct from './CardProduct';
-import { SERVER_URL, BASE_ROUTE } from '../constants';
+import { SERVER_URL } from '../constants';
 import Spinner from "./Spinner";
 import SearchIcon from '@mui/icons-material/Search';
-import { SetListProducts } from './categorySlice'
+import TuneIcon from '@mui/icons-material/Tune';
+import AdvancedSearch from './AdvancedSearch';
+import { ProductsByAdvancedSearch } from '../services/ApiServicesProduct';
+import Tooltip from '@mui/material/Tooltip';
 
 export default function HomePage() {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const listSelect = useSelector((state) => state.reducer.categorys.listSelect);
-    const listProductsFromRedux = useSelector((state) => state.reducer.categorys.listProducts);
+
     const [search, setSearch] = useState('');
     const [countPages, setCountPages] = useState(1);
     const [listProducts, setListProducts] = useState([]);
-    const [listProductsSearch, setListProductsSearch] = useState('');
     const [isLoading, setIsLoading] = useState(true)
     const [page, setPage] = useState(1);
-    const listOfFavoritProducts = useSelector((state) => state.reducer.listProducts.listOfFavoritProducts);
+    const [bodyAdvancedSearch, setBodyAdvancedSearch] = useState(null);
+    const [openAdvancedSearch, setOpenAdvancedSearch] = useState(false);
+
 
     useEffect(() => {
-        debugger
+        setBodyAdvancedSearch(null);
         ProductsBySearch("");
     }, [])
-
+    const clearFilter = () => {
+        setBodyAdvancedSearch(null);
+        ProductsBySearch("");
+    }
     const debounce = (func, timeout = 300) => {
         let timer;
         return (...args) => {
@@ -55,7 +50,7 @@ export default function HomePage() {
         }, {
             withCredentials: true
         }).then((res) => {
-            dispatch(SetListProducts(res.data.list));
+            // dispatch(SetListProducts(res.data.list));
             setListProducts(res.data.list);
             setPage(cnt)
             setCountPages(Math.ceil(res.data.count / 9))
@@ -71,20 +66,48 @@ export default function HomePage() {
         debouncedChangeHandler(e);
     }
     const handleChangePage = (event, value) => {
-        ProductsBySearch(search, value)
+        if (bodyAdvancedSearch)
+            ProductsByAdvanceSearch(value)
+        else
+            ProductsBySearch(search, value)
         window.scrollTo(0, 0);
     };
+    const handleOpenAdvancedSearch = () => {
+        setOpenAdvancedSearch(prev => !prev)
+    }
+    const ProductsByAdvanceSearch = async (cnt = 1, selected, selectedTypeDelivery, title, city) => {
+        if (!bodyAdvancedSearch && !selected && !selectedTypeDelivery && !title && !city) {
+            return;
+        }
+        setIsLoading(true)
+        let data = '';
+        if (bodyAdvancedSearch && !selected && !selectedTypeDelivery && !title && !city) {
+            data = await ProductsByAdvancedSearch(cnt, bodyAdvancedSearch)
+
+        } else {
+            data = await ProductsByAdvancedSearch(cnt, { selected, selectedTypeDelivery, title, city })
+        }
+        if (data) {
+            setListProducts(data?.list);
+            setPage(cnt)
+            setCountPages(Math.ceil(data?.count / 9));
+            setBodyAdvancedSearch({ selected, selectedTypeDelivery, title, city })
+        }
+        setIsLoading(false)
+    }
     return (
         <div style={{
             marginTop: "100px",
         }}>
-
+            <AdvancedSearch open={openAdvancedSearch} handleClose={handleOpenAdvancedSearch} handleSearch={ProductsByAdvanceSearch} />
             <Box style={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 height: "100px"
             }}>
+
                 {/* <SelectField
                     list={listSelect}
                     label="Select a category"
@@ -99,7 +122,7 @@ export default function HomePage() {
                     value={selectedTypeDelivery}
                 /> */}
                 <TextField
-                    sx={{ width: '30%' }}
+                    className="search-input-home-page"
                     icon={<SearchIcon
                         sx={{ m: 1 }} />}
                     label="Search.."
@@ -107,6 +130,30 @@ export default function HomePage() {
                     value={search}
                     setValue={handleChangeSearch}
                 />
+                <Box style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    height: "100px",
+                    width: '30%'
+                }}>
+
+                    <Button
+                        className="search-input-home-page"
+                        variant={"contained"}
+                        sx={{ mt: 2 }}
+                        onClick={handleOpenAdvancedSearch}
+                    >
+                        <TuneIcon />
+                    </Button>
+                    {
+                        bodyAdvancedSearch &&
+                        <Tooltip title="Clear filter" placement="top"  >
+                            <FormatColorResetIcon onClick={clearFilter} style={{ cursor: "pointer" }} />
+                        </Tooltip>
+                    }
+                </Box>
                 {/* <TextField
                     icon={<ApartmentSharpIcon
                         sx={{ m: 1 }} />}
@@ -120,7 +167,7 @@ export default function HomePage() {
             {isLoading ? <Spinner isLoading={isLoading} /> : <>
                 {(listProducts && listProducts[0]) && (<>
                     <div
-                        className="cointener"
+                        className="container-cards-products"
                         style={{
                             display: "flex",
                             flexWrap: "wrap",

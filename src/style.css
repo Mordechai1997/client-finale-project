@@ -1,7 +1,8 @@
-body{
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
+body {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     user-select: none;
 }
+
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
     display: none;
@@ -17,29 +18,56 @@ input[type="password"]::-ms-clear {
     padding: 20px;
     width: 35vw;
 }
-.btn-login:hover{
+
+.btn-login:hover {
     color: white;
 }
+
+.search-input-home-page {
+    width: 30%;
+}
+
 @media only screen and (max-width: 750px) {
     .form-login {
         width: 80vw;
     }
+
+    .cointener-favorit-products,
+    .cointener-my-products,
+    .container-cards-products {
+        flex-direction: column;
+    }
+
+    .search-input-home-page,
+    .card-product {
+        width: 90%;
+    }
+
+    .cointener-edit-the-details {
+        flex-direction: column;
+    }
+
+    .cointener-edit-the-details>div {
+        margin-bottom: 10px;
+    }
+
 }
+
 ::-webkit-scrollbar {
     width: 8px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
+}
+
+/* Track */
+::-webkit-scrollbar-track {
     border-radius: 5px;
-  }
-   
-  /* Handle */
-  /* ::-webkit-scrollbar-thumb {
+}
+
+/* Handle */
+/* ::-webkit-scrollbar-thumb {
     background: linear-gradient(145deg, black, rgba(204, 204, 234, 0.318)); 
     border-radius: 5px;
   } */
-  ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background: linear-gradient(145deg, #afdbf5, rgba(204, 204, 234, 0.318));
     border-radius: 5px;
 }

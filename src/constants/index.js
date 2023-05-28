@@ -4,5 +4,7 @@ export const BASE_ROUTE = {
     AUTH: 'auth',
     SIGNUP: 'signup',
     PRODUCTS: 'products',
-    GETALLUSERNOTFICATIONS:'getAllUserNotifications'
+    GETALLUSERNOTFICATIONS: 'getAllUserNotifications',
+    CONTACTUSEMAIL: 'ContactUsEmail',
+
 }

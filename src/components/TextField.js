@@ -19,9 +19,10 @@ export default function TextField
     errorMessage = '',
     max,
     min,
+    className
   }) {
   return (
-    <FormControl variant="standard" sx={{ ...sx }}>
+    <FormControl className={className} variant="standard" sx={{ ...sx }}>
       <InputLabel htmlFor={id}>{label}</InputLabel>
       <Input
         required={required}

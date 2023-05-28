@@ -29,7 +29,7 @@ export default function MyProductsPage() {
         }}>
             {isLoading ? <Spinner isLoading={isLoading} /> :
                 <>{listOfMyProducts[0] ? <div
-                    className="cointener"
+                    className="cointener-my-products"
                     style={{
                         display: "flex",
                         flexWrap: "wrap",

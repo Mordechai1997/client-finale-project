@@ -25,3 +25,18 @@ export const getAllUserNotifications = async () => {
         throw err;
     }
 }
+export const ContactUsEmail = async (message, email, item = null) => {
+    try {
+        const data = await Axios.post(`${SERVER_URL}/${BASE_ROUTE.CONTACTUSEMAIL}`, {
+            message,
+            email,
+            item
+        }, {
+            withCredentials: true
+        })
+        return data.data;
+
+    } catch (err) {
+        throw err;
+    }
+}

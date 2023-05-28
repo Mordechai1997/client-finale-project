@@ -17,6 +17,7 @@ import FavoritProductsPage from './FavoritProductsPage';
 import OpenRoute from './OpenRoute';
 import MyProductsPage from './MyProductsPage';
 import EditProduct from './EditProduct';
+import { ContactUs } from './ContactUs';
 
 
 function App() {
@@ -40,7 +41,7 @@ function App() {
           <Route path="/home" element={<ProtectedRoute children={<HomePage />} />} />
           <Route path="/login" element={<OpenRoute children={<Login />} />} />
           <Route path="/signup" element={<OpenRoute children={<SignUp />} />} />
-          <Route path="/contact" element={<OpenRoute children={<Login />} />} />
+          <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/reset-password-email" element={<OpenRoute children={<ResetPasswordEmail />} />} />
           <Route path="/reset-password" element={<OpenRoute children={<ResetPassword />} />} />
           <Route path="/publish" element={<ProtectedRoute children={<Publish />} />} />

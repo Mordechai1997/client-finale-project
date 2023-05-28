@@ -122,3 +122,19 @@ export const userViewedTheAlert = async (notificationId) => {
         return err
     }
 }
+export const ProductsByAdvancedSearch = async (cnt, data) => {
+    try {
+        const response = await Axios.post(`${SERVER_URL}/products/ProductsByAdvancedSearch`, {
+            selected: data.selected,
+            selectedTypeDelivery: data.selectedTypeDelivery,
+            title: data.title,
+            city: data.city,
+            cnt
+        }, {
+            withCredentials: true
+        })
+        return response?.data;
+    } catch (err) {
+        return err
+    }
+}

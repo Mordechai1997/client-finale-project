@@ -23,7 +23,7 @@ export default function EditTheDetails() {
     const navigate = useNavigate();
     const userLogIn = useSelector((state) => state.reducer.userlogin.userInfo);
     const [message, setMessage] = useState(null);
-    const [email, setEmail] = useState(userLogIn.email ? userLogIn.email : '');
+    const [email, setEmail] = useState(userLogIn?.email ? userLogIn.email : '');
     const [fullName, setFullName] = useState(userLogIn.username ? userLogIn.username : '')
     const [phoneNumber, setPhoneNumber] = useState(userLogIn.phoneNumber ? userLogIn.phoneNumber : '')
     const [disabled, setDisable] = useState(true)
@@ -108,14 +108,16 @@ export default function EditTheDetails() {
     }
 
     return (
-        <div>
-            <div style={{
-                width: ' 80%',
-                display: 'flex',
-                justifyContent: ' space-around',
-                alignItems: 'center',
-                margin: 'auto'
-            }}>
+        <div >
+            <div
+                className='cointener-edit-the-details'
+                style={{
+                    width: ' 80%',
+                    display: 'flex',
+                    justifyContent: ' space-around',
+                    alignItems: 'center',
+                    margin: 'auto'
+                }}>
                 <NameField
                     label='Full Name'
                     id='input-full-name'
@@ -149,29 +151,31 @@ export default function EditTheDetails() {
                     max={10}
 
                 />
-                {
-                    !disabled &&
+                <div className="container-btn-edit">
+                    {
+                        !disabled &&
+                        <Button
+                            className={`cancel-btn-details`}
+                            variant="outlined"
+                            onClick={() => setDisable(prev => !prev)}
+                            sx={{ width: 80, height: 45, mr: 5 }}
+
+                        >
+                            Cancel
+                        </Button>
+                    }
                     <Button
-                        className={`cancel-btn-details`}
-                        variant="outlined"
-                        onClick={() => setDisable(prev => !prev)}
-                        sx={{ width: 80, height: 45 }}
+                        className={` ${disabled ? 'Edit' : 'Save'}-btn-Details`}
+                        variant="contained"
+                        onClick={handleSubmit}
+                        sx={{ width: 80, height: 45, backgroundColor: "linear-gradient(145deg, black, blue)" }}
 
                     >
-                        Cancel
+                        {disabled ? 'Edit' : 'Save'}
+                        <span style={{ marginLeft: '4px', paddingTop: '5px' }}>{disabled ? <EditIcon fontSize="small" /> : <SaveAsIcon fontSize='small' />}</span>
+
                     </Button>
-                }
-                <Button
-                    className={` ${disabled ? 'Edit' : 'Save'}-btn-Details`}
-                    variant="contained"
-                    onClick={handleSubmit}
-                    sx={{ width: 80, height: 45, backgroundColor: "linear-gradient(145deg, black, blue)" }}
-
-                >
-                    {disabled ? 'Edit' : 'Save'}
-                    <span style={{ marginLeft: '4px', paddingTop: '5px' }}>{disabled ? <EditIcon fontSize="small" /> : <SaveAsIcon fontSize='small' />}</span>
-
-                </Button>
+                </div>
             </div >
             <div className='alert-edit-details' style={{ width: '50%', margin: 'auto', marginTop: 20 }} >
                 {

@@ -23,7 +23,7 @@ export const validPublic = (selected, title, fileName, phone, city, selectedType
     if (!selected) {
         return ({ message: 'Select cagegory!', type: 'error' })
     }
-    if (selectedTypeDelivery != 1 && selectedTypeDelivery != 2) {
+    if (selectedTypeDelivery !== 1 && selectedTypeDelivery !== 2) {
         return ({ message: 'Select type delivery!', type: 'error' })
     }
     if (!title) {

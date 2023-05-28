@@ -9,7 +9,6 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
 import { SERVER_URL, BASE_ROUTE } from '../constants';
 import { useNavigate } from 'react-router-dom';
 import ModeIcon from '@mui/icons-material/Mode';
@@ -18,6 +17,10 @@ import { addLikeProduct, deleteMyProduct, removeFavoritProduct } from "../servic
 import { initFavoritProducts } from "./listProductsSlice";
 import { Box } from "@mui/material";
 import DraggableDialog from "./PopUp";
+import ReportIcon from '@mui/icons-material/Report';
+import Tooltip from '@mui/material/Tooltip';
+import Skeleton from '@mui/material/Skeleton';
+import ReportProduct from "./ReportProduct";
 
 export default function CardProduct({ item, fromFavoritProductsPage = false, fromMyProductsPage = false }) {
 
@@ -31,6 +34,8 @@ export default function CardProduct({ item, fromFavoritProductsPage = false, fro
   const [like, setLike] = useState(fromFavoritProductsPage ? true : listOfFavoritProducts?.some(el => el.product_id === item.product_id));
   const [isMyProduct, setIsMyProduct] = useState(fromMyProductsPage ? true : listOfMyProducts?.some(el => el.product_id === item.product_id));
   const [openPopUp, setOpenPopUp] = useState(false);
+  const [loadedImg, setLoadedImg] = useState(true);
+  const [openReport, setOpenReport] = useState(false);
   const [openPopUpSuccess, setOpenPopUpSuccess] = useState(false);
 
 
@@ -80,10 +85,11 @@ export default function CardProduct({ item, fromFavoritProductsPage = false, fro
 
   return (
     <>
+      <ReportProduct item={item} open={openReport} closeReport={() => setOpenReport(false)} />
       <DraggableDialog title={"Are you sure you want to delete the product?"} open={openPopUp} handleClose={() => setOpenPopUp(false)} handleOk={deleteProduct} />
-      <DraggableDialog title={<p style={{color:"green"}}>The delete was successfully</p>} open={openPopUpSuccess} handleOk={() => setOpenPopUpSuccess(false)} />
-
+      <DraggableDialog title={<p style={{ color: "green" }}>The delete was successfully</p>} open={openPopUpSuccess} handleOk={() => setOpenPopUpSuccess(false)} />
       <Card
+        className="card-product"
         sx={{
           maxWidth: 345,
           borderRadius: "8px",
@@ -93,14 +99,19 @@ export default function CardProduct({ item, fromFavoritProductsPage = false, fro
 
         }}
       >
-        <CardMedia
-          style={{ cursor: "pointer" }}
-          component="img"
-          height="194"
-          image={item.image_name ? `${SERVER_URL}/${item.image_name}` : "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=250&h=200&fit=crop&auto=format"}
-          alt="Paella dish"
-          onClick={navigateToProductPage}
-        />
+        <span style={{ cursor: "pointer" }} onClick={navigateToProductPage}>
+          {loadedImg &&
+            <Skeleton variant="rectangular" height={194} />}
+          <CardMedia
+            style={loadedImg ? { display: 'none' } : {}}
+            component="img"
+            height="194"
+            image={item.image_name ? `${SERVER_URL}/${item.image_name}` : "https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=250&h=200&fit=crop&auto=format"}
+            alt="Paella dish"
+
+            onLoad={() => setLoadedImg(false)}
+          />
+        </span>
         <CardContent>
           <Typography variant="body2" color="text.secondary">
             {item.title}
@@ -125,7 +136,9 @@ export default function CardProduct({ item, fromFavoritProductsPage = false, fro
                 <FavoriteIcon />
               </IconButton>
               <IconButton aria-label="share">
-                <ShareIcon />
+                <Tooltip title={"Report"}>
+                  <ReportIcon onClick={() => setOpenReport(true)} />
+                </Tooltip>
               </IconButton>
             </Box>
           }
@@ -133,6 +146,7 @@ export default function CardProduct({ item, fromFavoritProductsPage = false, fro
             {item.CategoryName}
           </Typography>
         </CardActions>
+
       </Card>
     </>
 
